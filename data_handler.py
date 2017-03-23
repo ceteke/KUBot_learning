@@ -41,7 +41,6 @@ class DataHandler():
 
             act.add_data_to_object(object_name, int(object_pose), before_features, effect_features)
 
-            if not set_size == -1:
-                i += 1
-
+            i += 1
+            
         print "Collected actions: %s" % ([str(a) for a in self.actions])
