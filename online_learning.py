@@ -19,7 +19,7 @@ class OnlineLearning():
                 y = y[np.newaxis].T
                 x = np.vstack([x, [1.0]])
                 y = np.vstack([y, [0.0]])
-                a.update_weights(x,y,0.005)
+                a.update_weights(x,y,0.2)
             mse = a.get_gradient_descent_mse()
             print "MSE: %f" % (mse)
             plt.plot(a.Js)

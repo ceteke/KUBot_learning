@@ -16,7 +16,7 @@ class OfflineLearning():
             for i in range(n_try):
                 a_clone = copy.deepcopy(a)
                 a.preprocess(test_size)
-                a.train()
+                a.offline_train()
                 trials.append(Trial(a,a.get_regression_score(), a.get_cluster_accuracy()))
             trials.sort(key=lambda t: t.regression_score, reverse=True)
             trials.sort(key=lambda t: t.cluster_accuracy, reverse=True)

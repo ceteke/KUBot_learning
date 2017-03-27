@@ -1,7 +1,6 @@
 from sklearn.linear_model import LinearRegression
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.model_selection import train_test_split
 import pickle
@@ -14,9 +13,8 @@ class Action():
     def __init__(self,name):
         self.name = name
         self.regressor = LinearRegression()
-        self.before_scaler = MinMaxScaler()
-        self.effect_scaler = MinMaxScaler()
         self.effect_cluster = KMeans(n_clusters=2)
+        self.online_effect_cluster = MiniBatchKMeans(n_clusters=2)
         self.gmm = GaussianMixture(n_components=2)
         self.objects = []
         self.clusters = {0:'Stay', 1:'Roll'}
@@ -42,6 +40,8 @@ class Action():
             self.objects.append(obj)
 
         sample = Sample(X, y, obj)
+        sample.X /= np.max(np.abs(sample.X),axis=0)
+        sample.y /= np.max(np.abs(sample.y),axis=0)
         self.samples.append(sample)
 
     def update_weights(self,x,y,alpha):
@@ -86,14 +86,6 @@ class Action():
             self.X_test.append(s.X)
             self.y_test.append(s.y)
 
-        #print "Preprocessing action: %s\nSet size: %d\nTrain set size: %d\nTest set size: %d" % (self.name, len(self.samples), len(self.X_train),len(self.X_test))
-        #print "Objects: %s" % ([str(o) for o in self.objects])
-
-        self.X_train = self.before_scaler.fit_transform(self.X_train)
-        self.X_test = self.before_scaler.transform(self.X_test)
-        self.y_train = self.effect_scaler.fit_transform(self.y_train)
-        self.y_test = self.effect_scaler.transform(self.y_test)
-
     def offline_train(self):
         self.regressor.fit(self.X_train, self.y_train)
         self.gmm.fit(self.y_train)
@@ -103,7 +95,6 @@ class Action():
         true_count = 0.0
         for s in self.test_samples:
             x = s.X.reshape(1,-1)
-            x = self.before_scaler.transform(x)
             y_predicted = self.regressor.predict(x)
             effect = self.gmm.predict(y_predicted)
             test_count += 1.0
@@ -116,8 +107,6 @@ class Action():
 
     def save(self,train_path):
         pickle.dump(self.regressor, open('%s%s_linear_regression'% (train_path, self.name), 'wb'))
-        pickle.dump(self.before_scaler, open('%s%s_before_scaler' % (train_path, self.name), 'wb'))
-        pickle.dump(self.effect_scaler, open('%s%s_effect_scaler' % (train_path, self.name), 'wb'))
         pickle.dump(self.gmm, open('%s%s_effect_cluster' % (train_path, self.name), 'wb'))
 
     def __str__(self):
