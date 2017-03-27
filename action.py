@@ -79,9 +79,9 @@ class Action():
             x = s.X.reshape(1,-1)
             x = self.before_scaler.transform(x)
             y_predicted = self.regressor.predict(x)
-            effect = self.gmm.predict(y_predicted)[0]
+            effect = self.gmm.predict(y_predicted)
             test_count += 1.0
-            if self.expected_effects[s.obj.id] == effect:
+            if self.expected_effects[s.obj.id] == effect[0]:
                 true_count += 1.0
         return (true_count/test_count) * 100.0
 
@@ -92,7 +92,7 @@ class Action():
         pickle.dump(self.regressor, open('%s%s_linear_regression'% (train_path, self.name), 'wb'))
         pickle.dump(self.before_scaler, open('%s%s_before_scaler' % (train_path, self.name), 'wb'))
         pickle.dump(self.effect_scaler, open('%s%s_effect_scaler' % (train_path, self.name), 'wb'))
-        pickle.dump(self.effect_cluster, open('%s%s_effect_cluster' % (train_path, self.name), 'wb'))
+        pickle.dump(self.gmm, open('%s%s_effect_cluster' % (train_path, self.name), 'wb'))
 
     def __str__(self):
         return '%s: %s' % (self.name, [str(o) for o in self.objects])
