@@ -29,6 +29,9 @@ class Action():
                                 'box0': 0,
                                 'sphere0': 1}
         self.samples = []
+        self.dimensions = 70 #69 + 1
+        self.W = np.random.rand(self.dimensions,self.dimensions)
+        self.Js = []
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name,obj_pose)
@@ -40,6 +43,29 @@ class Action():
 
         sample = Sample(X, y, obj)
         self.samples.append(sample)
+
+    def update_weights(self,x,y,alpha):
+        J = self.get_square_error(x,y) / 2
+        self.Js.append(J)
+        dJdW = np.matmul(self.W,np.matmul(x,x.T)) - np.matmul(y,x.T)
+        self.W -= alpha * dJdW
+
+    def get_square_error(self, x, y):
+        a = y - np.matmul(self.W, x)
+        return np.matmul(a.T, a)[0][0]
+
+    def get_gradient_descent_mse(self):
+        total = 0.0
+        c = 0.0
+        for i in range(len(self.X_test)):
+            x = self.X_test[i][np.newaxis].T
+            y = self.y_test[i][np.newaxis].T
+            x = np.vstack([x, [1.0]])
+            y = np.vstack([y, [0.0]])
+            err = self.get_square_error(x,y)
+            total += err
+            c += 1.0
+        return total/c
 
     def preprocess(self, test_size):
         self.X_train = []
@@ -68,7 +94,7 @@ class Action():
         self.y_train = self.effect_scaler.fit_transform(self.y_train)
         self.y_test = self.effect_scaler.transform(self.y_test)
 
-    def train(self):
+    def offline_train(self):
         self.regressor.fit(self.X_train, self.y_train)
         self.gmm.fit(self.y_train)
 
