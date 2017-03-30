@@ -18,6 +18,7 @@ class OfflineLearning():
                 a.preprocess(test_size)
                 a.offline_train()
                 trials.append(Trial(a,a.get_regression_score(), a.get_cluster_accuracy()))
+            #print trials
             trials.sort(key=lambda t: t.regression_score, reverse=True)
             trials.sort(key=lambda t: t.cluster_accuracy, reverse=True)
             best_trials.append(trials[0])

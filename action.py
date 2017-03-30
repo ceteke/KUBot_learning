@@ -49,6 +49,7 @@ class Action():
         self.Js.append(J)
         dJdW = np.matmul(self.W,np.matmul(x,x.T)) - np.matmul(y,x.T)
         self.W -= alpha * dJdW
+        return True
 
     def get_square_error(self, x, y):
         a = y - np.matmul(self.W, x)
