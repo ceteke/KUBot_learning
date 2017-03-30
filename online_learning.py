@@ -6,7 +6,7 @@ class OnlineLearning():
 
     def __init__(self,data_set_size=-1):
         self.data_set_size = data_set_size
-        self.dh = DataHandler()
+        self.dh = DataHandler(data_path='/Volumes/ROSDATA/ros_data/features/csv/')
         self.dh.collect_data(self.data_set_size)
 
     def train(self):
@@ -19,9 +19,7 @@ class OnlineLearning():
                 y = y[np.newaxis].T
                 x = np.vstack([x, [1.0]])
                 y = np.vstack([y, [0.0]])
-                is_interesting = a.update_weights(x,y,0.2)
-                if not is_interesting:
-                    break
+                a.update_weights(x,y,0.2)
             mse = a.get_gradient_descent_mse()
             print "MSE: %f" % (mse)
             plt.plot(a.Js)

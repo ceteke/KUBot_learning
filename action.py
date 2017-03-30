@@ -7,6 +7,7 @@ import pickle
 from my_object import MyObject
 import random
 from sample import Sample
+from utils import scale_sample
 
 class Action():
 
@@ -40,8 +41,6 @@ class Action():
             self.objects.append(obj)
 
         sample = Sample(X, y, obj)
-        sample.X /= np.max(np.abs(sample.X),axis=0)
-        sample.y /= np.max(np.abs(sample.y),axis=0)
         self.samples.append(sample)
 
     def update_weights(self,x,y,alpha):
@@ -68,6 +67,13 @@ class Action():
             c += 1.0
         return total/c
 
+    def cluster_exclude_object(self, obj):
+        effects = []
+        for s in self.samples:
+            s_scaled = scale_sample(s)
+            effects.append(s_scaled.y)
+        self.gmm.fit(effects)
+
     def preprocess(self, test_size):
         self.X_train = []
         self.y_train = []
@@ -80,12 +86,14 @@ class Action():
         self.train_samples = self.samples[how_many:]
 
         for s in self.train_samples:
-            self.X_train.append(s.X)
-            self.y_train.append(s.y)
+            s_scaled = scale_sample(s)
+            self.X_train.append(s_scaled.X)
+            self.y_train.append(s_scaled.y)
 
         for s in self.test_samples:
-            self.X_test.append(s.X)
-            self.y_test.append(s.y)
+            s_scaled = scale_sample(s)
+            self.X_test.append(s_scaled.X)
+            self.y_test.append(s_scaled.y)
 
     def offline_train(self):
         self.regressor.fit(self.X_train, self.y_train)
@@ -94,8 +102,10 @@ class Action():
     def get_cluster_accuracy(self):
         test_count = 0.0
         true_count = 0.0
-        for s in self.test_samples:
-            x = s.X.reshape(1,-1)
+        for i in range(len(self.test_samples)):
+            X = self.X_test[i]
+            s = self.test_samples[i]
+            x = X.reshape(1,-1)
             y_predicted = self.regressor.predict(x)
             effect = self.gmm.predict(y_predicted)
             test_count += 1.0
