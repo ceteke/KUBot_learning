@@ -1,21 +1,18 @@
 from sklearn.linear_model import LinearRegression
 import numpy as np
-from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.model_selection import train_test_split
 import pickle
 from my_object import MyObject
 import random
 from sample import Sample
-from utils import scale_sample
+from utils import scale_sample, zero_one_scaler
 
 class Action():
 
     def __init__(self,name):
         self.name = name
         self.regressor = LinearRegression()
-        self.effect_cluster = KMeans(n_clusters=2)
-        self.online_effect_cluster = MiniBatchKMeans(n_clusters=2)
         self.gmm = GaussianMixture(n_components=2)
         self.objects = []
         self.clusters = {0:'Stay', 1:'Roll'}
@@ -86,12 +83,16 @@ class Action():
         self.train_samples = self.samples[how_many:]
 
         for s in self.train_samples:
-            s_scaled = scale_sample(s)
+            s_scaled = zero_one_scaler(s)
+            np.delete(s_scaled.X,22)
+            np.delete(s_scaled.y,22)
             self.X_train.append(s_scaled.X)
             self.y_train.append(s_scaled.y)
 
         for s in self.test_samples:
-            s_scaled = scale_sample(s)
+            s_scaled = zero_one_scaler(s)
+            np.delete(s_scaled.X,22)
+            np.delete(s_scaled.y,22)
             self.X_test.append(s_scaled.X)
             self.y_test.append(s_scaled.y)
 
