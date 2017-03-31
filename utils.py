@@ -3,11 +3,13 @@ from copy import deepcopy
 from math import sqrt
 from sample import Sample
 
+
 def scale_sample(sample):
     new_sample = deepcopy(sample)
-    new_sample.X /= np.max(np.abs(sample.X),axis=0)
-    new_sample.y /= np.max(np.abs(sample.y),axis=0)
+    new_sample.X /= np.max(np.abs(sample.X), axis=0)
+    new_sample.y /= np.max(np.abs(sample.y), axis=0)
     return new_sample
+
 
 def get_average(arr):
     total = 0.0
@@ -15,17 +17,20 @@ def get_average(arr):
         total += a
     return total/len(arr)
 
-def get_std(arr,avg):
+
+def get_std(arr, avg):
     total = 0.0
     for a in arr:
         total += (a-avg)**2
     return sqrt(total/len(arr))
 
+
 def z_score_scale(arr):
     avg = get_average(arr)
-    std = get_std(arr,avg)
+    std = get_std(arr, avg)
     for i in range(len(arr)):
         arr[i] = (arr[i] - avg)/std
+
 
 def z_score_sample_scale(sample):
     X_histogram = list(sample.X[24:69])
@@ -39,8 +44,8 @@ def z_score_sample_scale(sample):
 
     X += X_histogram
     y += y_histogram
+    return Sample(X, y, sample.obj)
 
-    return Sample(X,y,sample.obj)
 
 def zero_one_scaler(sample):
     X_histogram = list(sample.X[24:69])
@@ -72,4 +77,4 @@ def zero_one_scaler(sample):
     X += X_histogram
     y += y_histogram
 
-    return Sample(np.array(X),np.array(y),sample.obj)
+    return Sample(np.array(X), np.array(y), sample.obj)

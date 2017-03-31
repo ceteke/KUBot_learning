@@ -2,6 +2,7 @@ import os
 import numpy as np
 from action import Action
 
+
 class DataHandler():
 
     def __init__(self, data_path='/media/cem/ROSDATA/ros_data/features/csv/'):
@@ -31,15 +32,17 @@ class DataHandler():
             before_features = np.genfromtxt(before_csv, delimiter=',')
             after_features = np.genfromtxt(after_csv, delimiter=',')
 
-            effect_features = np.subtract(after_features,before_features)
+            effect_features = np.subtract(after_features, before_features)
 
-            act = next((x for x in self.actions if x.name == action_name), None)
+            act = next((x for x in self.actions if x.name == action_name),
+                       None)
 
             if act is None:
                 act = Action(action_name)
                 self.actions.append(act)
 
-            act.add_data(object_name, int(object_pose), before_features, effect_features)
+            act.add_data(object_name, int(object_pose), before_features,
+                         effect_features)
 
             i += 1
 
