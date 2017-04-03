@@ -35,7 +35,7 @@ class DataHandler():
 
             before_features = np.genfromtxt(before_csv, delimiter=',')
             after_features = np.genfromtxt(after_csv, delimiter=',')
-            effect_features = np.absolute(after_features - before_features)
+            effect_features = np.substract(after_features, before_features)
 
             act = next((x for x in self.actions if x.name == action_name),
                        None)

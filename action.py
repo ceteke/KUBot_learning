@@ -99,9 +99,8 @@ class Action():
         test_count = 0.0
         true_count = 0.0
         for i in range(len(self.test_samples)):
-            X = self.X_test[i]
             s = self.test_samples[i]
-            x = X.reshape(1, -1)
+            x = self.before_scaler.transform(s.X.reshape(1, -1))
             y_predicted = self.regressor.predict(x)
             effect = self.gmm.predict(y_predicted)[0]
             test_count += 1.0
