@@ -6,8 +6,7 @@ class OfflineLearning():
 
     def __init__(self, data_set_size=-1):
         self.data_set_size = data_set_size
-        self.dh = DataHandler(data_path='/Volumes/ROSDATA/ros_data/features/\
-                              csv/')
+        self.dh = DataHandler(data_path='/Volumes/ROSDATA/ros_data/features/csv/')
         self.dh.collect_data(self.data_set_size)
 
     def get_best_fit(self, n_try, test_size):

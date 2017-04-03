@@ -1,6 +1,7 @@
-from utils import scale_sample, zero_one_scaler
 import matplotlib.pyplot as plt
 from offline_learning import OfflineLearning
+from utils import scale_data_point
+from sklearn.preprocessing import minmax_scale, scale, maxabs_scale
 
 
 class DataSetVisualization():
@@ -14,9 +15,15 @@ class DataSetVisualization():
         plt.legend()
         plt.show()
 
-    def plot_clusters_samples(self, samples, model):
-        for s in samples:
-            plt.plot(s.y, label=s.obj.id)
+    def plot_features(self, features):
+        for l, f in features.iteritems():
+            plt.plot(f, label=l)
+        plt.legend()
+        plt.show()
+
+    def plot_cluster_samples(self, samples, model):
+        for l, s in samples.iteritems():
+            plt.plot(s.y, label=l)
         plt.plot(model.means_[0], label='STAY CLUSTER MEANS')
         plt.plot(model.means_[1], label='ROLL CLUSTER MEANS')
         plt.legend()
@@ -33,24 +40,30 @@ for best_trial in best_trials:
 push = best_trials[0].action
 box_pos1 = next((x for x in push.test_samples if x.obj.name == 'box'
                  and x.obj.pose == 1), None)
-box_pos1_scaled = scale_sample(box_pos1)
-box_pos1_scaled2 = zero_one_scaler(box_pos1)
 
 box_pos0 = next((x for x in push.test_samples if x.obj.name == 'box'
                  and x.obj.pose == 0), None)
-box_pos0_scaled = scale_sample(box_pos0)
 
 sphere_pos0 = next((x for x in push.test_samples if x.obj.name == 'sphere'
                     and x.obj.pose == 0), None)
-sphere_pos0_scaled = scale_sample(sphere_pos0)
 
 sphere_pos1 = next((x for x in push.test_samples if x.obj.name == 'sphere'
                     and x.obj.pose == 1), None)
-sphere_pos1_scaled = scale_sample(sphere_pos1)
+
+vcylinder_pos0 = next((x for x in push.test_samples if x.obj.name == 'vcylinder'
+                       and x.obj.pose == 0), None)
+
+vcylinder_pos1 = next((x for x in push.test_samples if x.obj.name == 'vcylinder'
+                       and x.obj.pose == 1), None)
+
+hcylinder_pos0 = next((x for x in push.test_samples if x.obj.name == 'hcylinder'
+                       and x.obj.pose == 0), None)
+
+hcylinder_pos1 = next((x for x in push.test_samples if x.obj.name == 'hcylinder'
+                       and x.obj.pose == 1), None)
 
 dv = DataSetVisualization()
-dv.predict_sample(push, box_pos0_scaled)
-dv.predict_sample(push, box_pos1_scaled)
-dv.predict_sample(push, sphere_pos1_scaled)
-dv.predict_sample(push, sphere_pos0_scaled)
-dv.plot_samples({'eski': box_pos1_scaled, 'yeni': box_pos1_scaled2})
+dv.plot_features({'box_pos1_my': minmax_scale((box_pos1.y)),
+                  'box_pos1': box_pos1.y,
+                  'box_pos1_scikit': push.effect_scaler.transform(box_pos1.y.reshape(1, -1)).reshape(-1, 1)}
+                 )
