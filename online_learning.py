@@ -1,13 +1,14 @@
 import numpy as np
 from data_handler import DataHandler
 import matplotlib.pyplot as plt
-
+from sklearn.preprocessing import minmax_scale
+import math
 
 class OnlineLearning():
 
     def __init__(self, data_set_size=-1):
         self.data_set_size = data_set_size
-        self.dh = DataHandler(data_path='/Volumes/ROSDATA/ros_data/features/csv/')
+        self.dh = DataHandler(data_path='/media/cem/ROSDATA/ros_data/features/csv/')
         self.dh.collect_data(self.data_set_size)
 
     def train(self):
@@ -18,11 +19,12 @@ class OnlineLearning():
                 y = a.y_train[i]
                 x = x[np.newaxis].T
                 y = y[np.newaxis].T
+                a.online_cluster.partial_fit(y)
                 x = np.vstack([x, [1.0]])
                 y = np.vstack([y, [0.0]])
-                a.update_weights(x, y, 0.045)
-            mse = a.get_gradient_descent_mse()
-            print "MSE: %f" % (mse)
+                a.update_weights(x, y, 0.2)
+            rmse = math.sqrt(a.get_gradient_descent_mse())
+            print "RMSE: %f" % (rmse)
             plt.plot(a.Js)
             plt.ylabel('J')
             plt.show()

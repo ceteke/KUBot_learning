@@ -1,10 +1,6 @@
 import os
 import numpy as np
 from action import Action
-# from dataset_visualization import DataSetVisualization
-from utils import scale_data_point
-from sklearn.preprocessing import minmax_scale, scale
-
 
 class DataHandler():
 
@@ -35,7 +31,7 @@ class DataHandler():
 
             before_features = np.genfromtxt(before_csv, delimiter=',')
             after_features = np.genfromtxt(after_csv, delimiter=',')
-            effect_features = np.substract(after_features, before_features)
+            effect_features = np.subtract(after_features, before_features)
 
             act = next((x for x in self.actions if x.name == action_name),
                        None)
@@ -44,12 +40,7 @@ class DataHandler():
                 act = Action(action_name)
                 self.actions.append(act)
 
-            obj_id = '%s%s' % (object_name, object_pose)
-            # scaled_a = scale_data_point(after_features)
-            # scaled_b = scale_data_point(before_features)
-            # scaled_e = scaled_a - scaled_b
-            # scaled_e = scale_data_point(effect_features)
-            # self.dv.plot_features({'effect': scaled_e[0:24]})
+
             act.add_data(object_name, int(object_pose), before_features,
                          effect_features)
 
