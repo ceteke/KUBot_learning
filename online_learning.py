@@ -14,8 +14,8 @@ class OnlineLearning():
     def train(self):
         for a in self.dh.actions:
             a.split_train_test(0.2)
-            for i in range(len(a.X_train)):
-                a.gd.update(a.X_train[i], a.y_train[i])
+            for s in a.train_samples:
+                a.gd.update(s.X, s.y)
             rmse = a.gd.get_rmse(a.X_test, a.y_test)
             print "RMSE: %f" % (rmse)
             plt.plot(a.gd.Js)

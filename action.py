@@ -40,21 +40,6 @@ class Action():
         sample = Sample(X, y, obj)
         self.samples.append(sample)
 
-    def get_gradient_descent_mse(self):
-        total = 0.0
-        c = 0.0
-        for i in range(len(self.X_test)):
-            x = self.X_test[i][np.newaxis].T
-            y = self.y_test[i][np.newaxis].T
-            print "%s %d" % (self.test_samples[i].obj.id, self.online_cluster.predict(y)[0])
-            x = np.vstack([x, [1.0]])
-            y = np.vstack([y, [0.0]])
-            err = self.get_square_error(x, y)
-            total += err
-            c += 1.0
-        return total/c
-
-
     def split_train_test(self, test_size):
         self.X_train = []
         self.y_train = []
