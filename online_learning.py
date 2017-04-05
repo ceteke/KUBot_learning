@@ -13,18 +13,11 @@ class OnlineLearning():
 
     def train(self):
         for a in self.dh.actions:
-            a.preprocess(0.2)
+            a.split_train_test(0.2)
             for i in range(len(a.X_train)):
-                x = a.X_train[i]
-                y = a.y_train[i]
-                x = x[np.newaxis].T
-                y = y[np.newaxis].T
-                a.online_cluster.partial_fit(y)
-                x = np.vstack([x, [1.0]])
-                y = np.vstack([y, [0.0]])
-                a.update_weights(x, y, 0.2)
-            rmse = math.sqrt(a.get_gradient_descent_mse())
+                a.gd.update(a.X_train[i], a.y_train[i])
+            rmse = a.gd.get_rmse(a.X_test, a.y_test)
             print "RMSE: %f" % (rmse)
-            plt.plot(a.Js)
+            plt.plot(a.gd.Js)
             plt.ylabel('J')
             plt.show()

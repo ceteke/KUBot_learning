@@ -14,7 +14,8 @@ class OfflineLearning():
         for a in self.dh.actions:
             trials = []
             for i in range(n_try):
-                a.preprocess(test_size)
+                a.split_train_test(test_size)
+                a.scale_dataset()
                 a.offline_train()
                 trials.append(Trial(a, a.get_regression_score()))
             # print trials

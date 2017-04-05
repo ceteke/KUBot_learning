@@ -7,7 +7,7 @@ import random
 from sample import Sample
 from sklearn.preprocessing import minmax_scale
 from sklearn.cluster import MiniBatchKMeans
-
+from models import GradientDescent
 
 class Action():
 
@@ -27,9 +27,7 @@ class Action():
                                  'box0': 0,
                                  'sphere0': 1}
         self.samples = []
-        self.dimensions = 70  # 69 + 1
-        self.W = np.random.rand(self.dimensions, self.dimensions)
-        self.Js = []
+        self.gd = GradientDescent(minmax_scale)
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)
@@ -41,17 +39,6 @@ class Action():
 
         sample = Sample(X, y, obj)
         self.samples.append(sample)
-
-    def update_weights(self, x, y,  alpha):
-        J = self.get_square_error(x, y) / 2
-        self.Js.append(J)
-        dJdW = np.matmul(self.W, np.matmul(x, x.T)) - np.matmul(y, x.T)
-        self.W -= alpha * dJdW
-        return True
-
-    def get_square_error(self, x, y):
-        a = y - np.matmul(self.W, x)
-        return np.matmul(a.T, a)[0][0]
 
     def get_gradient_descent_mse(self):
         total = 0.0
@@ -67,7 +54,8 @@ class Action():
             c += 1.0
         return total/c
 
-    def preprocess(self, test_size):
+
+    def split_train_test(self, test_size):
         self.X_train = []
         self.y_train = []
         self.X_test = []
@@ -77,6 +65,20 @@ class Action():
         how_many = int(round(test_size*len(self.samples)))
         self.test_samples = self.samples[:how_many]
         self.train_samples = self.samples[how_many:]
+
+        for s in self.train_samples:
+            self.X_train.append(s.X)
+            self.y_train.append(s.y)
+
+        for s in self.test_samples:
+            self.X_test.append(s.X)
+            self.y_test.append(s.y)
+
+    def scale_dataset(self):
+        self.X_train = []
+        self.y_train = []
+        self.X_test = []
+        self.y_test = []
 
         for s in self.train_samples:
             self.X_train.append(minmax_scale(s.X))
