@@ -8,17 +8,6 @@ dh = DataHandler(data_path='/media/cem/ROSDATA/ros_data/features/csv/')
 dh.collect_data(-1)
 
 for a in dh.actions:
-    W = pickle.load(open('/home/cem/learning/models/%s_weights' % (a.name),'rb'))
-    c = 0.0
-    total = 0.0
-    for s in a.samples:
-        X = minmax_scale(s.X)
-        y = minmax_scale(s.y)
-        X = X[np.newaxis].T
-        y = y[np.newaxis].T
-        X = np.vstack([X, [1.0]])
-        a = y - np.delete(np.matmul(W, X), 69, 0)
-        err = np.matmul(a.T, a)[0][0]
-        total += err
-        c += 1.0
-    print math.sqrt(total / c), 'RMSE'
+    gd = pickle.load(open('/home/cem/learning/models/%s_gradient_descent' % (a.name),'rb'))
+    a.split_train_test(1)
+    print gd.get_rmse(a.X_test,a.y_test)

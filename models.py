@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import pickle
 
 class GradientDescent():
 
@@ -51,3 +52,6 @@ class GradientDescent():
             total += err
             c += 1.0
         return math.sqrt(total / c)
+
+    def save(self, prefix):
+        pickle.dump(self, open('/home/cem/learning/models/%s_gradient_descent' % (prefix), 'wb'))
