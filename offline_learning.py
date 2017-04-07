@@ -17,9 +17,9 @@ class OfflineLearning():
                 a.split_train_test(test_size)
                 a.scale_dataset()
                 a.offline_train()
-                trials.append(Trial(a, a.get_regression_score()))
-            # print trials
-            trials.sort(key=lambda t: (t.regression_score), reverse=True)
-            #trials.sort(key=lambda t: t.cluster_accuracy, reverse=True)
+                print a.get_regression_score(), a.gmm.score(a.y_test)
+                trials.append(Trial(a, a.get_regression_score(), a.gmm.score(a.y_test)))
+        #    print trials
+            trials.sort(key=lambda t: t.cluster_score, reverse=True)
             best_trials.append(trials[0])
         return best_trials
