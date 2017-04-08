@@ -24,10 +24,11 @@ wmap = {}
 figure(1)
 im = 0
 for x,t in zip(data,num): # scatterplot
-	w = som.winner(x)
-	wmap[w] = im
-	text(w[0]+.5, w[1]+.5, str(t), color=cm.Dark2(t / 4.), fontdict={'weight': 'bold', 'size': 11})
-	im = im + 1
+    w = som.winner(x)
+    wmap[w] = im
+    print w
+    text(w[0]+.5, w[1]+.5, str(t), color=cm.Dark2(t / 4.), fontdict={'weight': 'bold', 'size': 11})
+    im = im + 1
 axis([0,som.y,0,som.x])
 
 figure(2,facecolor='white')

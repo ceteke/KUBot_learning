@@ -5,7 +5,7 @@ from sklearn.preprocessing import minmax_scale
 
 class SOM():
 
-    def __init__(self, x, y, feature_size, alpha0, sigma0, T1=20, T2=20):
+    def __init__(self, x, y, feature_size, alpha0, sigma0, T1=5, T2=5):
         self.x = x # Num of columns
         self.y = y # Num of rows
         self.alpha0 = alpha0
@@ -21,6 +21,11 @@ class SOM():
         for i in range(self.x * self.y):
             self.weights.append(np.random.rand(self.feature_size))
 
+    def add_neuron(self, weight):
+        # Add only to x axis
+        self.weights.append(weight)
+        self.x += 1
+
     def decay_alpha(self):
         return self.alpha0 * np.exp(-1 * (self.t / self.T1))
 
@@ -30,6 +35,10 @@ class SOM():
     def get_bmu_index(self, x):
         diff = [np.linalg.norm(x - w) for w in self.weights]
         return np.argmin(diff)
+
+    def get_min_distance(self, x):
+        diff = [np.linalg.norm(x - w) for w in self.weights]
+        return np.min(diff)
 
     def winner(self, x):
         return np.unravel_index(self.get_bmu_index(x), (self.y, self.x))
@@ -43,7 +52,6 @@ class SOM():
         return np.exp(-1 * (d**2/(2*(self.decay_sigma()**2))))
 
     def update(self, x):
-        x = minmax_scale(x)
         i = self.get_bmu_index(x)
         for j in range(len(self.weights)):
             neighborhood = self.neighborhood(j, i)

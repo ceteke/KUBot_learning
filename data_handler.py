@@ -4,7 +4,7 @@ from action import Action
 
 class DataHandler():
 
-    def __init__(self, data_path='/media/cem/ROSDATA/ros_data/features/csv/'):
+    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/csv/'):
         self.data_path = data_path
         self.csv_folders = os.listdir(self.data_path)
         self.actions = []

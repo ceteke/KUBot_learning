@@ -7,7 +7,7 @@ import random
 from sample import Sample
 from sklearn.preprocessing import minmax_scale
 from sklearn.cluster import MiniBatchKMeans
-from models import GradientDescent
+from models import GradientDescent, SOM
 
 class Action():
 
@@ -28,6 +28,7 @@ class Action():
                                  'sphere0': 1}
         self.samples = []
         self.gd = GradientDescent(minmax_scale)
+        self.som = SOM(10,10,69,0.2,0.5)
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)
