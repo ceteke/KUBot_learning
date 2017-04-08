@@ -1,6 +1,60 @@
 import numpy as np
 import math
 import pickle
+from sklearn.preprocessing import minmax_scale
+
+class SOM():
+
+    def __init__(self, x, y, feature_size, alpha0, sigma0, T1=20, T2=20):
+        self.x = x # Num of columns
+        self.y = y # Num of rows
+        self.alpha0 = alpha0
+        self.sigma0 = sigma0
+        self.T1 = T1
+        self.T2 = T2
+        self.t = 0
+        self.feature_size = feature_size
+        self.init_weights()
+
+    def init_weights(self):
+        self.weights = []
+        for i in range(self.x * self.y):
+            self.weights.append(np.random.rand(self.feature_size))
+
+    def decay_alpha(self):
+        return self.alpha0 * np.exp(-1 * (self.t / self.T1))
+
+    def decay_sigma(self):
+        return self.sigma0 * np.exp(-1 * (self.t / self.T2))
+
+    def get_bmu_index(self, x):
+        diff = [np.linalg.norm(x - w) for w in self.weights]
+        return np.argmin(diff)
+
+    def winner(self, x):
+        return np.unravel_index(self.get_bmu_index(x), (self.y, self.x))
+
+    def distance(self, j, i):
+        coordinates = np.unravel_index([j, i], (self.y, self.x))
+        return np.linalg.norm(coordinates[0] - coordinates[1])
+
+    def neighborhood(self, j, i):
+        d = self.distance(j, i)
+        return np.exp(-1 * (d**2/(2*(self.decay_sigma()**2))))
+
+    def update(self, x):
+        x = minmax_scale(x)
+        i = self.get_bmu_index(x)
+        for j in range(len(self.weights)):
+            neighborhood = self.neighborhood(j, i)
+            self.weights[j] = self.weights[j] + self.decay_alpha() * neighborhood * (x - self.weights[j])
+        self.t += 1
+
+    def quantization(self, data):
+        q = zeros(data.shape)
+        for i, x in enumarate(data):
+            q[i] = self.weights[self.get_bmu_index(x)]
+        return q
 
 class GradientDescent():
 
