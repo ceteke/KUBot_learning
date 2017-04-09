@@ -27,8 +27,8 @@ class Action():
                                  'box0': 0,
                                  'sphere0': 1}
         self.samples = []
-        self.gd = GradientDescent(minmax_scale)
-        self.som = SOM(10,10,69,0.2,0.5)
+        self.gd = GradientDescent()
+        self.som = SOM(1,1,69,0.2,0.5)
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)
@@ -51,14 +51,6 @@ class Action():
         how_many = int(round(test_size*len(self.samples)))
         self.test_samples = self.samples[:how_many]
         self.train_samples = self.samples[how_many:]
-
-        for s in self.train_samples:
-            self.X_train.append(s.X)
-            self.y_train.append(s.y)
-
-        for s in self.test_samples:
-            self.X_test.append(s.X)
-            self.y_test.append(s.y)
 
     def scale_dataset(self):
         self.X_train = []

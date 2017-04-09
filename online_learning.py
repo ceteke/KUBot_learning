@@ -14,19 +14,26 @@ class OnlineLearning():
     def train(self):
         for a in self.dh.actions:
             a.split_train_test(0.2)
+            a.scale_dataset()
             for s in a.train_samples:
-                a.gd.update(s.X, s.y)
-                min_distance = a.som.get_min_distance(s.y)
-                if min_distance > 20:
-                    a.som.add_neuron(s.y)
-                    # a.som.update(s.y)
+                y_s = minmax_scale(s.y)
+                x_s = minmax_scale(s.X)
+                a.gd.update(x_s, y_s)
+                min_distance = a.som.get_min_distance(y_s)
+                if min_distance > 1.25:
+                    a.som.add_neuron(y_s)
+                    # a.som.update(y_s)
                 else:
-                    a.som.update(s.y)
+                    a.som.update(y_s)
             # a.gd.save(a.name)
             print a.som.x
             rmse = a.gd.get_rmse(a.X_test, a.y_test)
             print "RMSE: %f" % (rmse)
+        added = []
         for a in self.dh.actions:
             for s in a.test_samples:
-                y_predicted = a.gd.predict(s.X)
-                print s.obj.id, a.som.winner(y_predicted.flatten())
+                x_s = minmax_scale(s.X)
+                y_predicted = a.gd.predict(x_s)
+                if s.obj.id not in added:
+                    print s.obj.id, a.som.winner(y_predicted.flatten())
+                    added.append(s.obj.id)
