@@ -19,20 +19,29 @@ class OnlineLearning():
             for s in a.train_samples:
                 y_s = minmax_scale(s.y)
                 x_s = minmax_scale(s.X)
+
                 o_min_distance = a.object_som.get_min_distance(x_s)
-                if o_min_distance > 1.25:
+                if o_min_distance is None:
                     a.object_som.add_neuron(x_s)
+                elif o_min_distance > 0.8:
+                    new_cid = a.object_som.add_neuron(x_s)
+                    a.obj_model_map[new_cid] = GradientDescent()
                 cluster_id = a.object_som.winner(x_s)[1]
-                if cluster_id not in a.obj_model_map:
-                    a.obj_model_map[cluster_id] = GradientDescent()
                 a.obj_model_map[cluster_id].update(x_s, y_s)
-                min_distance = a.effect_som.get_min_distance(y_s)
-                if min_distance > 1.25:
+
+                e_min_distance = a.effect_som.get_min_distance(y_s)
+                if e_min_distance is None:
+                    a.effect_som.add_neuron(y_s)
+                elif e_min_distance > 1.25:
                     a.effect_som.add_neuron(y_s)
                 a.effect_som.update(y_s)
             # a.gd.save(a.name)
             print a.object_som.x
             print a.effect_som.x
+        for cid, model in a.obj_model_map.iteritems():
+            plt.plot(model.Js, label=cid)
+        plt.legend()
+        plt.show()
         added = []
         for a in self.dh.actions:
             for s in a.test_samples:
@@ -42,5 +51,5 @@ class OnlineLearning():
                 y_predicted = model.predict(x_s)
                 #print model.get_square_error(x_s, minmax_scale(s.y))
                 if s.obj.id not in added:
-                    print s.obj.id, a.effect_som.winner(y_predicted.flatten())
+                    print s.obj.id, a.effect_som.winner(y_predicted.flatten())[1]
                     added.append(s.obj.id)

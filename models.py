@@ -25,6 +25,7 @@ class SOM():
         # Add only to x axis
         self.weights.append(weight)
         self.x += 1
+        return self.x - 1 
 
     def decay_alpha(self):
         return self.alpha0 * np.exp(-1 * (self.t / self.T1))
@@ -37,6 +38,8 @@ class SOM():
         return np.argmin(diff)
 
     def get_min_distance(self, x):
+        if len(self.weights) == 0:
+            return None
         diff = [np.linalg.norm(x - w) for w in self.weights]
         return np.min(diff)
 
@@ -82,7 +85,7 @@ class GradientDescent():
         self.Js.append(J)
         dJdW = np.matmul(self.W, np.matmul(x_s, x_s.T)) - np.matmul(y_s, x_s.T)
         self.W -= self.alpha_t * dJdW
-        alpha_t = self.alpha0*500/(self.t+500)
+        alpha_t = self.alpha0*1000/(self.t+1000)
         self.t += 1
 
     def get_square_error(self, x, y):
