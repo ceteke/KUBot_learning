@@ -28,7 +28,9 @@ class Action():
                                  'sphere0': 1}
         self.samples = []
         self.gd = GradientDescent()
-        self.som = SOM(1,1,69,0.2,0.5)
+        self.effect_som = SOM(1,1,69,0.2,0.5)
+        self.object_som = SOM(1,1,69,0.2,0.5)
+        self.obj_model_map = {0: GradientDescent()}
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)
