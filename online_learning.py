@@ -19,7 +19,6 @@ class OnlineLearning():
             for s in a.train_samples:
                 y_s = minmax_scale(s.y)
                 x_s = minmax_scale(s.X)
-
                 o_min_distance = a.object_som.get_min_distance(x_s)
                 if o_min_distance is None:
                     a.object_som.add_neuron(x_s)
@@ -32,7 +31,7 @@ class OnlineLearning():
                 e_min_distance = a.effect_som.get_min_distance(y_s)
                 if e_min_distance is None:
                     a.effect_som.add_neuron(y_s)
-                elif e_min_distance > 1.25:
+                elif e_min_distance > 2:
                     a.effect_som.add_neuron(y_s)
                 a.effect_som.update(y_s)
             # a.gd.save(a.name)
@@ -53,3 +52,14 @@ class OnlineLearning():
                 if s.obj.id not in added:
                     print s.obj.id, a.effect_som.winner(y_predicted.flatten())[1]
                     added.append(s.obj.id)
+
+            for k, v in a.obj_model_map.iteritems():
+                j_avgs = []
+                t = 0.0
+                for i in range(len(v.Js)):
+                    t += v.Js[i]
+                    j_avgs.append(t / float(i+1))
+                print min(j_avgs)
+                plt.plot(j_avgs, label=k)
+            plt.legend()
+            plt.show()

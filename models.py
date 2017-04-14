@@ -69,7 +69,7 @@ class SOM():
 
 class GradientDescent():
 
-    def __init__(self, dimensions = 70, alpha0 = 0.2):
+    def __init__(self, dimensions = 70, alpha0 = 0.25):
         self.dimensions = dimensions
         self.alpha0 = alpha0
         self.W = np.random.rand(self.dimensions, self.dimensions)

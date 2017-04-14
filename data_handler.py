@@ -4,46 +4,63 @@ from action import Action
 
 class DataHandler():
 
-    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/csv/'):
+    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/new/'):
         self.data_path = data_path
         self.csv_folders = os.listdir(self.data_path)
         self.actions = []
         # self.dv = DataSetVisualization()
 
-    def collect_data(self, set_size):
+    def collect_data(self, set_size = -1):
         print "Collecting data..."
-        i = 0
+        # i = 0
         for csv_folder in self.csv_folders:
             if csv_folder[0] == '.':
                 continue
 
-            if i >= set_size and not set_size == -1:
-                break
+            # if i >= set_size and not set_size == -1:
+            #    break
 
-            object_info = csv_folder.split('_')
-            object_name = object_info[2]
-            object_pose = object_info[3]
-            action_name = object_info[4]
+            run_directory = os.path.join(self.data_path, csv_folder)
+            action_directorties = os.listdir(run_directory)
 
-            iteration_data_path = self.data_path + csv_folder
-            before_csv = iteration_data_path + '/0_preproc.csv'
-            after_csv = iteration_data_path + '/1_preproc.csv'
+            for ad in action_directorties:
+                if ad[0] == '.':
+                    continue
 
-            before_features = np.genfromtxt(before_csv, delimiter=',')
-            after_features = np.genfromtxt(after_csv, delimiter=',')
-            effect_features = np.subtract(after_features, before_features)
+                action_directory = os.path.join(run_directory, ad)
 
-            act = next((x for x in self.actions if x.name == action_name),
-                       None)
+                object_directories = os.listdir(action_directory)
 
-            if act is None:
-                act = Action(action_name)
-                self.actions.append(act)
+                for od in object_directories:
+                    if od[0] == '.':
+                        continue
 
+                    object_directory = os.path.join(action_directory, od)
 
-            act.add_data(object_name, int(object_pose), before_features,
-                         effect_features)
+                    iteration_directories = os.listdir(object_directory)
 
-            i += 1
+                    for id in iteration_directories:
+                        if id[0] == '.':
+                            continue
+
+                        iteration_directory = os.path.join(object_directory, id)
+
+                        before_csv = iteration_directory + '/0.csv'
+                        after_csv = iteration_directory + '/1.csv'
+
+                        before_features = np.genfromtxt(before_csv, delimiter=',')
+                        after_features = np.genfromtxt(after_csv, delimiter=',')
+                        effect_features = np.subtract(after_features, before_features)
+
+                        act = next((x for x in self.actions if x.name == ad),
+                                   None)
+
+                        if act is None:
+                            act = Action(ad)
+                            self.actions.append(act)
+
+                        act.add_data(od, int(id), before_features, effect_features)
+
+                        # i += 1
 
         print "Collected actions: %s" % ([str(a) for a in self.actions])
