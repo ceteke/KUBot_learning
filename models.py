@@ -5,33 +5,25 @@ from sklearn.preprocessing import minmax_scale
 
 class SOM():
 
-    def __init__(self, x, y, feature_size, alpha0, sigma0, T1=5, T2=5):
-        self.x = x # Num of columns
-        self.y = y # Num of rows
+    def __init__(self, feature_size, alpha0, d0, T1=500, T2=500):
         self.alpha0 = alpha0
-        self.sigma0 = sigma0
+        self.d0 = d0
         self.T1 = T1
         self.T2 = T2
         self.t = 0
         self.feature_size = feature_size
-        self.init_weights()
-
-    def init_weights(self):
         self.weights = []
-        for i in range(self.x * self.y):
-            self.weights.append(np.random.rand(self.feature_size))
 
     def add_neuron(self, weight):
         # Add only to x axis
         self.weights.append(weight)
-        self.x += 1
-        return self.x - 1 
+        return len(self.weights) - 1
 
     def decay_alpha(self):
         return self.alpha0 * np.exp(-1 * (self.t / self.T1))
 
-    def decay_sigma(self):
-        return self.sigma0 * np.exp(-1 * (self.t / self.T2))
+    def decay_d(self):
+        return self.d0 * np.exp(-1 * (self.t / self.T2))
 
     def get_bmu_index(self, x):
         diff = [np.linalg.norm(x - w) for w in self.weights]
@@ -44,15 +36,14 @@ class SOM():
         return np.min(diff)
 
     def winner(self, x):
-        return np.unravel_index(self.get_bmu_index(x), (self.y, self.x))
-
-    def distance(self, j, i):
-        coordinates = np.unravel_index([j, i], (self.y, self.x))
-        return np.linalg.norm(coordinates[0] - coordinates[1])
+        return self.get_bmu_index(x)
 
     def neighborhood(self, j, i):
-        d = self.distance(j, i)
-        return np.exp(-1 * (d**2/(2*(self.decay_sigma()**2))))
+        d = self.decay_d()
+        weight_distance = np.linalg.norm(self.weights[i] - self.weights[j])
+        if weight_distance > d:
+            return 0.0
+        return 1.0
 
     def update(self, x):
         i = self.get_bmu_index(x)
@@ -61,15 +52,9 @@ class SOM():
             self.weights[j] = self.weights[j] + self.decay_alpha() * neighborhood * (x - self.weights[j])
         self.t += 1
 
-    def quantization(self, data):
-        q = zeros(data.shape)
-        for i, x in enumarate(data):
-            q[i] = self.weights[self.get_bmu_index(x)]
-        return q
+class OnlineRegression():
 
-class GradientDescent():
-
-    def __init__(self, dimensions = 70, alpha0 = 0.25):
+    def __init__(self, dimensions = 52, alpha0 = 0.01):
         self.dimensions = dimensions
         self.alpha0 = alpha0
         self.W = np.random.rand(self.dimensions, self.dimensions)

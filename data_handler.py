@@ -4,7 +4,7 @@ from action import Action
 
 class DataHandler():
 
-    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/new/'):
+    def __init__(self, data_path='/media/cem/ROSDATA/ros_data/features/new1/'):
         self.data_path = data_path
         self.csv_folders = os.listdir(self.data_path)
         self.actions = []
@@ -63,4 +63,4 @@ class DataHandler():
 
                         # i += 1
 
-        print "Collected actions: %s" % ([str(a) for a in self.actions])
+        #print "Collected actions: %s" % ([str(a) for a in self.actions])

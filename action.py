@@ -7,7 +7,7 @@ import random
 from sample import Sample
 from sklearn.preprocessing import minmax_scale
 from sklearn.cluster import MiniBatchKMeans
-from models import GradientDescent, SOM
+from models import OnlineRegression, SOM
 
 class Action():
 
@@ -27,10 +27,10 @@ class Action():
                                  'box0': 0,
                                  'sphere0': 1}
         self.samples = []
-        self.gd = GradientDescent()
-        self.effect_som = SOM(0, 1, 69, 0.2, 0.4720)
-        self.object_som = SOM(0, 1, 69, 1.2, 0.0887)
-        self.obj_model_map = {0: GradientDescent()}
+        self.gd = OnlineRegression()
+        self.effect_som = SOM(51, 0.2, 0.5)
+        self.object_som = SOM(51, 0.2, 0.4)
+        self.obj_model_map = {0: OnlineRegression()}
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)
@@ -61,8 +61,8 @@ class Action():
         self.y_test = []
 
         for s in self.train_samples:
-            self.X_train.append(minmax_scale(s.X))
-            self.y_train.append(minmax_scale(s.y))
+            self.X_train.append(np.append(minmax_scale(s.X[0:7]), minmax_scale(s.X[7:52])))
+            self.y_train.append(np.append(minmax_scale(s.y[0:7]), minmax_scale(s.y[7:52])))
 
         for s in self.test_samples:
             self.X_test.append(minmax_scale(s.X))
