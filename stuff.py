@@ -5,12 +5,15 @@ from sklearn.preprocessing import minmax_scale, scale
 
 
 def scale(features):
+    if np.array_equal(features, np.array([-1.0]*52)):
+        return np.array([-1.0]*51)
     features = np.delete(features, 3)
-    position = minmax_scale(features[0:3])
-    position = np.multiply(position, 10.0)
-    size = minmax_scale(features[3:6])
-    histogram = minmax_scale(features[6:51])
-    new_feats = np.append(position, np.append(size, histogram))
+    f_s = minmax_scale(features)
+    position = f_s[0:3]
+    #position = np.multiply(position, 10)
+    others = f_s[3:51]
+    others = np.multiply(others, 0.01)
+    new_feats = np.append(position, others)
     return new_feats
 
 #obj_map = pickle.load(open('/home/cem/learning/models/push_map.pkl', 'rb'))
@@ -22,7 +25,7 @@ after_csv1 = '/media/cem/ROSDATA/ros_data/features/new1/620/push/vcylinder/47/1.
 
 before_features = np.genfromtxt(before_csv, delimiter=',')
 after_features = np.genfromtxt(after_csv, delimiter=',')
-effect_features = np.absolute(np.subtract(after_features, before_features))
+effect_features = np.subtract(after_features, before_features)
 
 before_features1 = np.genfromtxt(before_csv1, delimiter=',')
 after_features1 = np.genfromtxt(after_csv1, delimiter=',')

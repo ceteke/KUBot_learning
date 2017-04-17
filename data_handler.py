@@ -50,7 +50,10 @@ class DataHandler():
 
                         before_features = np.genfromtxt(before_csv, delimiter=',')
                         after_features = np.genfromtxt(after_csv, delimiter=',')
-                        effect_features = np.subtract(after_features, before_features)
+                        if np.array_equal(after_features, np.array([-1.0]*52)):
+                            effect_features = np.array([-1.0]*52)
+                        else:
+                            effect_features = np.subtract(after_features, before_features)
 
                         act = next((x for x in self.actions if x.name == ad),
                                    None)
