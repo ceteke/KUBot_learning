@@ -45,7 +45,7 @@ class OnlineLearning():
                 e_min_distance = a.effect_som.get_min_distance(y_s)
                 if e_min_distance is None:
                     a.effect_som.add_neuron(y_s)
-                elif e_min_distance > 0.03:
+                elif e_min_distance > 0.014:
                     a.effect_som.add_neuron(y_s)
                 else:
                     a.effect_som.update(y_s)
@@ -70,19 +70,27 @@ class OnlineLearning():
                 J = J / 2
                 predicted_eid = a.effect_som.winner(y_predicted.flatten())
                 if predicted_eid not in clusters:
-                    clusters[predicted_eid] = [(s.obj.name, J)]
+                    clusters[predicted_eid] = [(s.obj.name, J, y_s, cluster_id)]
                 else:
-                    clusters[predicted_eid].append((s.obj.name, J))
-            print pp.pprint(clusters)
+                    clusters[predicted_eid].append((s.obj.name, J, y_s, cluster_id))
+            #print pp.pprint(clusters)
 
             for k, v in clusters.iteritems():
                 obj_count = {}
+                y_s = []
+                J_total = 0.0
+                J_count = 0.0
                 for p_o in v:
+                    y_s.append(p_o[2])
+                    J_total += p_o[1]
+                    J_count += 1.0
                     if p_o[0] in obj_count:
                         obj_count[p_o[0]] += 1
                     else:
                         obj_count[p_o[0]] = 1
-                print k, obj_count
+                print "Mean J", J_total/J_count
+                print k, obj_count, np.average(y_s, axis=0)
+            print len(a.test_samples), len(a.train_samples)
 
             for k, v in a.obj_model_map.iteritems():
                 j_avgs = []

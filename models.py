@@ -5,7 +5,7 @@ from sklearn.preprocessing import minmax_scale
 
 class SOM():
 
-    def __init__(self, feature_size, alpha0, d0, T1=100, T2=100):
+    def __init__(self, feature_size, alpha0, d0, T1=100, T2=10):
         self.alpha0 = alpha0
         self.d0 = d0
         self.T1 = T1
@@ -54,7 +54,7 @@ class SOM():
 
 class OnlineRegression():
 
-    def __init__(self, dimensions = 52, alpha0 = 0.1):
+    def __init__(self, dimensions = 52, alpha0 = 0.2):
         self.dimensions = dimensions
         self.alpha0 = alpha0
         self.W = np.random.rand(self.dimensions, self.dimensions)
@@ -70,7 +70,7 @@ class OnlineRegression():
         self.Js.append(J)
         dJdW = np.matmul(self.W, np.matmul(x_s, x_s.T)) - np.matmul(y_s, x_s.T)
         self.W -= self.alpha_t * dJdW
-        alpha_t = self.alpha0*1000/(self.t+1000)
+        alpha_t = self.alpha0*100/(self.t+100)
         self.t += 1
 
     def get_square_error(self, x, y):
