@@ -8,13 +8,12 @@ import matplotlib.pyplot as plt
 ol = OnlineLearning()
 
 def only_regression():
-    dh = DataHandler()
-    dh.collect_data()
+    dh = ol.dh
     o = OnlineRegression()
     for a in dh.actions:
         for s in a.samples:
             x_s = ol.scale(s.X)
-            y_s = ol.scale(s.y)
+            y_s = np.array(ol.scale(s.y)[0:3])
             o.update(x_s,y_s)
     plt.plot(o.Js, label="j")
     plt.legend()

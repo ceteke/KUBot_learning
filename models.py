@@ -5,7 +5,7 @@ from sklearn.preprocessing import minmax_scale
 
 class SOM():
 
-    def __init__(self, feature_size, alpha0, d0, T1=100, T2=10):
+    def __init__(self, feature_size, alpha0, d0, T1=100, T2=100):
         self.alpha0 = alpha0
         self.d0 = d0
         self.T1 = T1
@@ -53,25 +53,26 @@ class SOM():
         self.t += 1
 
 class OnlineRegression():
-
-    def __init__(self, dimensions = 52, alpha0 = 0.2):
+    def __init__(self, dimensions = (3, 4), alpha0 = 0.5, T=100):
         self.dimensions = dimensions
         self.alpha0 = alpha0
-        self.W = np.random.rand(self.dimensions, self.dimensions)
+        self.W = np.random.rand(self.dimensions[0], self.dimensions[1])
         self.Js = []
         self.t = 0
-        self.alpha_t = self.alpha0
+        self.alpha0 = alpha0
+        self.T = T
 
     def update(self, x, y):
         x_s = self.__preproc_x(x)
         y_s = y[np.newaxis].T
-        y_s = np.vstack([y_s, [0.0]])
         J = self.get_square_error(x_s, y_s) / 2
         self.Js.append(J)
         dJdW = np.matmul(self.W, np.matmul(x_s, x_s.T)) - np.matmul(y_s, x_s.T)
-        self.W -= self.alpha_t * dJdW
-        alpha_t = self.alpha0*100/(self.t+100)
+        self.W -= self.decay_alpha() * dJdW
         self.t += 1
+
+    def decay_alpha(self):
+        return self.alpha0 * np.exp(-1 * (self.t / self.T))
 
     def get_square_error(self, x, y):
         a = y - np.matmul(self.W, x)
@@ -79,7 +80,7 @@ class OnlineRegression():
 
     def predict(self, x):
         x_s = self.__preproc_x(x)
-        return np.delete(np.matmul(self.W, x_s), self.dimensions-1, 0)
+        return np.matmul(self.W, x_s)
 
     def __preproc_x(self, x):
         x_s = x[np.newaxis].T

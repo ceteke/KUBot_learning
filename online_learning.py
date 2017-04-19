@@ -14,38 +14,38 @@ class OnlineLearning():
         self.dh.collect_data(self.data_set_size)
 
     def scale(self, features):
-        if np.array_equal(features, np.array([-1.0]*52)):
-            return np.array([-1.0]*51)
-        features = np.delete(features, 3)
-        f_s = minmax_scale(features)
-        position = f_s[0:3]
-        others = f_s[3:51]
-        others = np.multiply(others, 0.01)
-        new_feats = np.append(position, others)
-        return new_feats
+        if np.array_equal(features, np.array([-1.0]*51)):
+            return features
+        position = features[0:3]
+        others = features[3:51]
+        #position = np.multiply(position, 10.0)
+        #others = np.multiply(others, 0.01)
+        new_feats = np.append(position, minmax_scale(others))
+        return minmax_scale(features)
 
     def train(self):
         pp = pprint.PrettyPrinter(indent=3)
         for a in self.dh.actions:
             a.split_train_test(0.1)
             for s in a.train_samples:
-                y_s = self.scale(s.y)
-                x_s = self.scale(s.X)
-                o_min_distance = a.object_som.get_min_distance(x_s)
+                y_s = np.array(self.scale(s.y)[0:3])
+                x_s_h = self.scale(s.X)[3:51]
+                x_s_p = self.scale(s.X)[0:3]
+                o_min_distance = a.object_som.get_min_distance(x_s_h)
                 if o_min_distance is None:
-                    a.object_som.add_neuron(x_s)
-                elif o_min_distance > 0.01:
-                    new_cid = a.object_som.add_neuron(x_s)
+                    a.object_som.add_neuron(x_s_h)
+                elif o_min_distance > 0.5:
+                    new_cid = a.object_som.add_neuron(x_s_h)
                     a.obj_model_map[new_cid] = OnlineRegression()
                 else:
-                    a.object_som.update(x_s)
-                cluster_id = a.object_som.winner(x_s)
-                a.obj_model_map[cluster_id].update(x_s, y_s)
+                    a.object_som.update(x_s_h)
+                cluster_id = a.object_som.winner(x_s_h)
+                a.obj_model_map[cluster_id].update(x_s_p, y_s)
 
                 e_min_distance = a.effect_som.get_min_distance(y_s)
                 if e_min_distance is None:
                     a.effect_som.add_neuron(y_s)
-                elif e_min_distance > 0.014:
+                elif e_min_distance > 0.0008:
                     a.effect_som.add_neuron(y_s)
                 else:
                     a.effect_som.update(y_s)
@@ -60,11 +60,12 @@ class OnlineLearning():
         for a in self.dh.actions:
             clusters = {}
             for s in a.test_samples:
-                x_s = self.scale(s.X)
-                y_s = self.scale(s.y)
-                cluster_id = a.object_som.winner(x_s)
+                x_s_p = self.scale(s.X)[0:3]
+                x_s_h = self.scale(s.X)[3:51]
+                y_s = self.scale(s.y)[0:3]
+                cluster_id = a.object_som.winner(x_s_h)
                 model = a.obj_model_map[cluster_id]
-                y_predicted = model.predict(x_s)
+                y_predicted = model.predict(x_s_p)
                 b = np.subtract(y_s, y_predicted.flatten())
                 J = np.matmul(b.T, b)
                 J = J / 2

@@ -28,8 +28,8 @@ class Action():
                                  'sphere0': 1}
         self.samples = []
         self.gd = OnlineRegression()
-        self.effect_som = SOM(51, 0.2, 0.0075)
-        self.object_som = SOM(51, 0.2, 0.005)
+        self.effect_som = SOM(3, 0.02, 0.0004)
+        self.object_som = SOM(48, 0.2, 0.25)
         self.obj_model_map = {0: OnlineRegression()}
 
     def add_data(self, obj_name, obj_pose, X, y):
