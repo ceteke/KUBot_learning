@@ -41,7 +41,7 @@ for a in dh.actions:
 
     e_distances = []
     e_cluster_distances = {}
-    efc_cluster = KMeans(n_clusters=128)
+    efc_cluster = KMeans(n_clusters=64)
     efc_distances = efc_cluster.fit_transform(y_train)
     for e in efc_distances:
         cid = np.argmin(e)

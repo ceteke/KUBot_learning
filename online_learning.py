@@ -21,7 +21,7 @@ class OnlineLearning():
         #position = np.multiply(position, 10.0)
         #others = np.multiply(others, 0.01)
         new_feats = np.append(position, minmax_scale(others))
-        return minmax_scale(features)
+        return new_feats
 
     def train(self):
         pp = pprint.PrettyPrinter(indent=3)
@@ -45,7 +45,7 @@ class OnlineLearning():
                 e_min_distance = a.effect_som.get_min_distance(y_s)
                 if e_min_distance is None:
                     a.effect_som.add_neuron(y_s)
-                elif e_min_distance > 0.0008:
+                elif e_min_distance > 0.01:
                     a.effect_som.add_neuron(y_s)
                 else:
                     a.effect_som.update(y_s)

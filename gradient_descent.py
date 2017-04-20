@@ -12,7 +12,7 @@ def only_regression():
     o = OnlineRegression()
     for a in dh.actions:
         for s in a.samples:
-            x_s = ol.scale(s.X)
+            x_s = ol.scale(s.X)[0:3]
             y_s = np.array(ol.scale(s.y)[0:3])
             o.update(x_s,y_s)
     plt.plot(o.Js, label="j")

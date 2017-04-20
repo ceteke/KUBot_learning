@@ -52,7 +52,7 @@ class DataHandler():
                         after_features = np.genfromtxt(after_csv, delimiter=',')
                         #print len(after_features)
                         if np.array_equal(after_features, np.array([-1.0]*51)):
-                            effect_features = np.array([-1.0]*51)
+                            continue
                         else:
                             effect_features = np.absolute(np.subtract(after_features, before_features))
 

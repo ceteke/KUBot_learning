@@ -5,7 +5,7 @@ from sklearn.preprocessing import minmax_scale
 
 class SOM():
 
-    def __init__(self, feature_size, alpha0, d0, T1=100, T2=100):
+    def __init__(self, feature_size, alpha0, d0, T1=1000, T2=1000):
         self.alpha0 = alpha0
         self.d0 = d0
         self.T1 = T1
@@ -53,7 +53,7 @@ class SOM():
         self.t += 1
 
 class OnlineRegression():
-    def __init__(self, dimensions = (3, 4), alpha0 = 0.5, T=100):
+    def __init__(self, dimensions = (3, 4), alpha0 = 0.2, T=1000):
         self.dimensions = dimensions
         self.alpha0 = alpha0
         self.W = np.random.rand(self.dimensions[0], self.dimensions[1])
