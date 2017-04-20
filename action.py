@@ -28,7 +28,7 @@ class Action():
                                  'sphere0': 1}
         self.samples = []
         self.gd = OnlineRegression()
-        self.effect_som = SOM(3, 0.2, 0.006)
+        self.effect_som = SOM(3, 0.5, 0.006)
         self.object_som = SOM(48, 0.2, 0.19)
         self.obj_model_map = {0: OnlineRegression()}
 

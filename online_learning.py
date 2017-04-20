@@ -75,7 +75,8 @@ class OnlineLearning():
                 else:
                     clusters[predicted_eid].append((s.obj.name, J, y_s, cluster_id))
             #print pp.pprint(clusters)
-
+            correct_count = 0.0
+            total = 0.0
             for k, v in clusters.iteritems():
                 obj_count = {}
                 y_s = []
@@ -90,9 +91,16 @@ class OnlineLearning():
                     else:
                         obj_count[p_o[0]] = 1
                 print "Mean J", J_total/J_count
-                print k, obj_count, np.average(y_s, axis=0)
+                avg_y = np.average(y_s, axis=0)
+                print k, obj_count, avg_y
+                if 'sphere' in obj_count and 'box' in obj_count or 'box' in obj_count and 'hcylinder' in obj_count or 'vcylinder' in obj_count and 'sphere' in obj_count or 'vcylinder' in obj_count and 'hcylinder' in obj_count:
+                    if not np.average(avg_y) < 0.09 or np.average(avg_y) < -0.5:
+                        correct_count += 1.0
+                if len(obj_count) == 1:
+                    correct_count += 1.0
+                total += 1.0
             print len(a.test_samples), len(a.train_samples)
-
+            print (correct_count / total) * 100
             for k, v in a.obj_model_map.iteritems():
                 j_avgs = []
                 t = 0.0
@@ -103,3 +111,5 @@ class OnlineLearning():
                 plt.plot(j_avgs, label=k)
             plt.legend()
             plt.show()
+
+
