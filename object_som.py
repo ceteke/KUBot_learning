@@ -41,6 +41,7 @@ for a in dh.actions:
         predicted_cid = object_som.winner(x)
         regressor = obj_model_map[predicted_cid]
         err = regressor.get_error(x, y)
+        print y, regressor.predict(x)
         if predicted_cid in test_Js:
             test_Js[predicted_cid].append(err)
         else:

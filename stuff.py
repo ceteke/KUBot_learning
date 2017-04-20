@@ -7,7 +7,35 @@ from online_learning import OnlineLearning
 
 ol = OnlineLearning()
 
-objs = {'hcylinder': [1180, 32], 'box': [10]}
+objs = { 'box': [647, 854, 399, 1478, 1165, 1325, 873],
+       'hcylinder': [1530, 1529],
+       'sphere': [319],
+       'vcylinder': [ 104,
+                      779,
+                      1463,
+                      362,
+                      1405,
+                      1676,
+                      994,
+                      310,
+                      521,
+                      682,
+                      300,
+                      298,
+                      643,
+                      1062,
+                      415,
+                      950,
+                      304,
+                      205,
+                      8,
+                      601,
+                      364,
+                      841,
+                      1091,
+                      1385,
+                      7,
+                      307]}
 
 for o, rid in objs.iteritems():
     for r in rid:

@@ -64,7 +64,6 @@ class OnlineRegression():
     def __init__(self, dimensions = (52, 52), alpha0 = 0.00001, T=100):
         self.dimensions = dimensions
         self.alpha0 = alpha0
-        np.random.seed(1024)
         self.W = np.random.rand(self.dimensions[0], self.dimensions[1])
         self.Js = []
         self.t = 0

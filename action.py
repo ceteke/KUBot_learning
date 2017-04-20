@@ -52,7 +52,6 @@ class Action():
         self.y_train = []
         self.X_test = []
         self.y_test = []
-        random.seed = 448
         random.shuffle(self.samples)
         how_many = int(round(test_size*len(self.samples)))
         self.test_samples = self.samples[:how_many]

@@ -14,7 +14,7 @@ class OnlineLearning():
         self.object_scaler = MinMaxScaler()
         self.effect_scaler = MinMaxScaler()
         for a in self.dh.actions:
-            a.split_train_test(0.1)
+            a.split_train_test(0.2)
             a.X_train = self.object_scaler.fit_transform(a.X_train)
             a.y_train = self.effect_scaler.fit_transform(a.y_train)
             a.X_test = self.object_scaler.transform(a.X_test)
