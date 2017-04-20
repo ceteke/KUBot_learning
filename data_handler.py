@@ -54,7 +54,7 @@ class DataHandler():
                         if np.array_equal(after_features, np.array([-1.0]*51)):
                             continue
                         else:
-                            effect_features = np.absolute(np.subtract(after_features, before_features))
+                            effect_features = np.subtract(after_features, before_features)
 
                         act = next((x for x in self.actions if x.name == ad),
                                    None)

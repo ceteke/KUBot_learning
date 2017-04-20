@@ -5,7 +5,7 @@ from sklearn.preprocessing import minmax_scale
 
 class SOM():
 
-    def __init__(self, feature_size, alpha0, d0, T1=1000, T2=1000):
+    def __init__(self, feature_size, alpha0, d0, T1=100, T2=1000, num_neurons=0):
         self.alpha0 = alpha0
         self.d0 = d0
         self.T1 = T1
@@ -13,9 +13,13 @@ class SOM():
         self.t = 0
         self.feature_size = feature_size
         self.weights = []
+        self.num_neurons = num_neurons
+
+    def init_weights(self):
+        for _ in range(self.num_neurons):
+            self.weights.append(np.random.rand(self.feature_size))
 
     def add_neuron(self, weight):
-        # Add only to x axis
         self.weights.append(weight)
         return len(self.weights) - 1
 
@@ -31,12 +35,15 @@ class SOM():
 
     def get_min_distance(self, x):
         if len(self.weights) == 0:
-            return None
+            return -1
         diff = [np.linalg.norm(x - w) for w in self.weights]
         return np.min(diff)
 
     def winner(self, x):
         return self.get_bmu_index(x)
+
+    def get_winner_neuron(self, x):
+        return self.weights[self.winner(x)]
 
     def neighborhood(self, j, i):
         d = self.decay_d()
@@ -51,11 +58,13 @@ class SOM():
             neighborhood = self.neighborhood(j, i)
             self.weights[j] = self.weights[j] + self.decay_alpha() * neighborhood * (x - self.weights[j])
         self.t += 1
+        return i
 
 class OnlineRegression():
-    def __init__(self, dimensions = (3, 4), alpha0 = 0.5, T=1000):
+    def __init__(self, dimensions = (52, 52), alpha0 = 0.00001, T=100):
         self.dimensions = dimensions
         self.alpha0 = alpha0
+        np.random.seed(1024)
         self.W = np.random.rand(self.dimensions[0], self.dimensions[1])
         self.Js = []
         self.t = 0
@@ -65,6 +74,7 @@ class OnlineRegression():
     def update(self, x, y):
         x_s = self.__preproc_x(x)
         y_s = y[np.newaxis].T
+        y_s = np.vstack([y_s, [0.0]])
         J = self.get_square_error(x_s, y_s) / 2
         self.Js.append(J)
         dJdW = np.matmul(self.W, np.matmul(x_s, x_s.T)) - np.matmul(y_s, x_s.T)
@@ -78,9 +88,15 @@ class OnlineRegression():
         a = y - np.matmul(self.W, x)
         return np.matmul(a.T, a)[0][0]
 
+    def get_error(self, x, y):
+        y_s = y[np.newaxis].T
+        y_s = np.vstack([y_s, [0.0]])
+        a = y_s - np.matmul(self.W, self.__preproc_x(x))
+        return np.matmul(a.T, a)[0][0] / 2
+
     def predict(self, x):
         x_s = self.__preproc_x(x)
-        return np.matmul(self.W, x_s)
+        return np.delete(np.matmul(self.W, x_s), self.dimensions[0]-1, 0).flatten()
 
     def __preproc_x(self, x):
         x_s = x[np.newaxis].T

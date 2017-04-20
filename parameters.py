@@ -11,11 +11,8 @@ y_train = []
 
 for a in dh.actions:
     # For ro
-    for i in range(batch):
-        a.split_train_test(0.0)
-        for k in range(len(a.train_samples)):
-            X_train.append(ol.scale(a.train_samples[k].X)[3:51])
-            y_train.append(ol.scale(a.train_samples[k].y)[0:3])
+    X_train = a.X_train
+    y_train = a.y_train
 
     print "Object means:", np.mean(X_train)
     print "Effect means:", np.mean(y_train)
@@ -24,7 +21,7 @@ for a in dh.actions:
 
     # Epsilon
     o_cluster_distances = {}
-    obj_cluster = KMeans(n_clusters=64)
+    obj_cluster = KMeans(n_clusters=200)
     obj_distances = obj_cluster.fit_transform(X_train)
     for o in obj_distances:
         cid = np.argmin(o)
@@ -41,7 +38,7 @@ for a in dh.actions:
 
     e_distances = []
     e_cluster_distances = {}
-    efc_cluster = KMeans(n_clusters=64)
+    efc_cluster = KMeans(n_clusters=200)
     efc_distances = efc_cluster.fit_transform(y_train)
     for e in efc_distances:
         cid = np.argmin(e)

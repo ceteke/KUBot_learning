@@ -1,6 +1,7 @@
 from sklearn.linear_model import LinearRegression
 import numpy as np
 from sklearn.mixture import GaussianMixture
+from sklearn.cluster import KMeans
 import pickle
 from my_object import MyObject
 import random
@@ -28,8 +29,11 @@ class Action():
                                  'sphere0': 1}
         self.samples = []
         self.gd = OnlineRegression()
-        self.effect_som = SOM(3, 0.5, 0.006)
-        self.object_som = SOM(48, 0.2, 0.19)
+        self.effect_som = SOM(51, 0.2, 0.2)
+        # self.effect_aux_som = SOM(3, 0.5, 0.001, num_neurons=10)
+        # self.effect_aux_som.init_weights()
+        self.object_som = SOM(51, 0.2, 0.01)
+        self.effect_aux_som = KMeans(n_clusters=10)
         self.obj_model_map = {0: OnlineRegression()}
 
     def add_data(self, obj_name, obj_pose, X, y):
@@ -48,11 +52,19 @@ class Action():
         self.y_train = []
         self.X_test = []
         self.y_test = []
-
+        random.seed = 448
         random.shuffle(self.samples)
         how_many = int(round(test_size*len(self.samples)))
         self.test_samples = self.samples[:how_many]
         self.train_samples = self.samples[how_many:]
+
+        for s in self.train_samples:
+            self.X_train.append(s.X)
+            self.y_train.append(s.y)
+
+        for s in self.test_samples:
+            self.X_test.append(s.X)
+            self.y_test.append(s.y)
 
     def scale_dataset(self):
         self.X_train = []
