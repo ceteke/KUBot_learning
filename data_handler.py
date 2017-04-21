@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from action import Action
+from copy import deepcopy
 
 class DataHandler():
 
@@ -52,9 +53,9 @@ class DataHandler():
                         after_features = np.genfromtxt(after_csv, delimiter=',')
                         #print len(after_features)
                         if np.array_equal(after_features, np.array([-1.0]*51)):
-                            continue
+                            effect_features = np.absolute(deepcopy(before_features))
                         else:
-                            effect_features = np.subtract(after_features, before_features)
+                            effect_features = np.absolute(np.subtract(after_features, before_features))
 
                         act = next((x for x in self.actions if x.name == ad),
                                    None)

@@ -61,7 +61,7 @@ class SOM():
         return i
 
 class OnlineRegression():
-    def __init__(self, dimensions = (52, 52), alpha0 = 0.00001, T=100):
+    def __init__(self, dimensions = (4, 4), alpha0 = 0.00001, T=100):
         self.dimensions = dimensions
         self.alpha0 = alpha0
         self.W = np.random.rand(self.dimensions[0], self.dimensions[1])
