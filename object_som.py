@@ -3,14 +3,17 @@ from data_handler import DataHandler
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import numpy as np
+import pprint
 
-object_som = SOM(48, 0.2, 0.2, T1=100, T2=100)
+object_som = SOM(52, 0.2, 0.2, T1=1000, T2=1000)
 dh = DataHandler()
 dh.collect_data()
 obj_model_map = {}
+pp = pprint.PrettyPrinter(indent=2)
+
 
 for a in dh.actions:
-    a.split_train_test(0.2)
+    a.split_train_test(0.1)
     x_scaler = MinMaxScaler()
     y_scaler = MinMaxScaler()
     X_train = x_scaler.fit_transform(a.X_train)
@@ -19,29 +22,49 @@ for a in dh.actions:
     y_test = y_scaler.transform(a.y_test)
 
     for i in range(len(X_train)):
-        x_h = X_train[i][3:51]
-        x_p = X_train[i][0:3]
+        x = X_train[i][3:51]
         y = y_train[i][0:3]
-        o_min_distance = object_som.get_min_distance(x_h)
-        if o_min_distance > 5 or o_min_distance == -1:
+        o = a.train_samples[i].obj
+        o_min_distance = object_som.get_min_distance(x)
+        if o_min_distance > 0.4 or o_min_distance == -1:
             is_new = True
-            new_cid = object_som.add_neuron(x_h)
-            obj_model_map[new_cid] = OnlineRegression(alpha0=0.2, T=1000)
+            new_cid = object_som.add_neuron(x)
+            obj_model_map[new_cid] = OnlineRegression(alpha0=0.2)
 
-        cluster_id = object_som.update(x_h)
-        obj_model_map[cluster_id].update(x_p, y)
+        cluster_id = object_som.update(x)
+
+        J = obj_model_map[cluster_id].update(x,y)
+
+    clusters = {}
+    for s in a.test_samples:
+        obj_name = s.obj.name
+        obj_pos = s.obj.pose
+        x = s.X
+        x_s = x_scaler.transform(x.reshape(1, -1)).flatten()[3:51]
+        cid = object_som.winner(x_s)
+
+        if cid in clusters:
+            objs = clusters[cid]
+            if obj_name in objs:
+                objs[obj_name].append(obj_pos)
+            else:
+                objs[obj_name] = [obj_pos]
+        else:
+            clusters[cid] = {obj_name: [obj_pos]}
+
+    pp.pprint(clusters)
+    print len(object_som.weights)
 
     test_Js = {}
     all_Js = []
     for i in range(len(X_test)):
-        x_h = X_test[i][3:51]
-        x_p = X_test[i][0:3]
+        x = X_test[i][3:51]
         y = y_test[i][0:3]
-        predicted_cid = object_som.winner(x_h)
+        predicted_cid = object_som.winner(x)
         regressor = obj_model_map[predicted_cid]
-        err = regressor.get_error(x_p, y)
+        err = regressor.get_error(x, y)
         #print err
-        y_predicted = regressor.predict(x_p)
+        y_predicted = regressor.predict(x).flatten()
         #plt.plot(y, label='y')
         #plt.plot(y_predicted, label='y_p')
         #plt.legend()

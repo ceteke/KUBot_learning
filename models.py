@@ -24,10 +24,10 @@ class SOM():
         return len(self.weights) - 1
 
     def decay_alpha(self):
-        return self.alpha0 * np.exp(-1 * (self.t / self.T1))
+        return self.alpha0 * np.exp(-1 * (float(self.t) / float(self.T1)))
 
     def decay_d(self):
-        return self.d0 * np.exp(-1 * (self.t / self.T2))
+        return self.d0 * np.exp(-1 * (float(self.t) / float(self.T2)))
 
     def get_bmu_index(self, x):
         diff = [np.linalg.norm(x - w) for w in self.weights]
@@ -61,7 +61,7 @@ class SOM():
         return i
 
 class OnlineRegression():
-    def __init__(self, dimensions = (4, 4), alpha0 = 0.00001, T=100):
+    def __init__(self, dimensions = (3, 49), alpha0 = 0.00001, T=100):
         self.dimensions = dimensions
         self.alpha0 = alpha0
         self.W = np.random.rand(self.dimensions[0], self.dimensions[1])
@@ -73,15 +73,16 @@ class OnlineRegression():
     def update(self, x, y):
         x_s = self.__preproc_x(x)
         y_s = y[np.newaxis].T
-        y_s = np.vstack([y_s, [0.0]])
+        #y_s = np.vstack([y_s, [1.0]])
         J = self.get_square_error(x_s, y_s) / 2
         self.Js.append(J)
         dJdW = np.matmul(self.W, np.matmul(x_s, x_s.T)) - np.matmul(y_s, x_s.T)
         self.W -= self.decay_alpha() * dJdW
         self.t += 1
+        return J
 
     def decay_alpha(self):
-        return self.alpha0 * np.exp(-1 * (self.t / self.T))
+        return self.alpha0 * np.exp(-1 * (float(self.t) / float(self.T)))
 
     def get_square_error(self, x, y):
         a = y - np.matmul(self.W, x)
@@ -89,13 +90,13 @@ class OnlineRegression():
 
     def get_error(self, x, y):
         y_s = y[np.newaxis].T
-        y_s = np.vstack([y_s, [0.0]])
+        #y_s = np.vstack([y_s, [1.0]])
         a = y_s - np.matmul(self.W, self.__preproc_x(x))
         return np.matmul(a.T, a)[0][0] / 2
 
     def predict(self, x):
         x_s = self.__preproc_x(x)
-        return np.delete(np.matmul(self.W, x_s), self.dimensions[0]-1, 0).flatten()
+        return np.matmul(self.W, x_s).flatten()
 
     def __preproc_x(self, x):
         x_s = x[np.newaxis].T
