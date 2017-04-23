@@ -5,7 +5,7 @@ from copy import deepcopy
 
 class DataHandler():
 
-    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/new2/'):
+    def __init__(self, data_path='/media/cem/ROSDATA/ros_data/features/new6/'):
         self.data_path = data_path
         self.csv_folders = os.listdir(self.data_path)
         self.actions = []
