@@ -4,6 +4,7 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from sklearn.cluster import KMeans
 import pprint
+import pickle
 
 pp = pprint.PrettyPrinter(indent=2)
 effect_som = SOM(3, 0.1, 0.03, T1=100, T2=100)
@@ -12,7 +13,7 @@ dh = DataHandler()
 dh.collect_data()
 
 for a in dh.actions:
-    y_scaler = MinMaxScaler()
+    y_scaler = pickle.load(open('/Users/Cem/learning/models/push_effect_scaler.pkl', 'rb'))
     a.split_train_test(0.2)
     y_train = y_scaler.fit_transform(a.y_train)
 

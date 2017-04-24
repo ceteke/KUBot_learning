@@ -12,5 +12,5 @@ for a in dh.actions:
     x_scaler.fit(a.X_train)
     y_scaler.fit(a.y_train)
 
-    pickle.dump(x_scaler, open('/home/cem/learning/models/%s_before_scaler.pkl' % (a.name), 'wb'))
-    pickle.dump(y_scaler, open('/home/cem/learning/models/%s_effect_scaler.pkl' % (a.name), 'wb'))
+    pickle.dump(x_scaler, open('/Users/Cem/learning/models/%s_before_scaler.pkl' % (a.name), 'wb'))
+    pickle.dump(y_scaler, open('/Users/Cem/learning/models/%s_effect_scaler.pkl' % (a.name), 'wb'))

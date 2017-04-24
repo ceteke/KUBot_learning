@@ -8,13 +8,13 @@ from copy import deepcopy
 
 ol = OnlineLearning()
 
-objs =  { 'hcylinder': [72, 765, 53, 47, 63, 46, 767, 769]}
-x_scaler = pickle.load(open('/home/cem/learning/models/push_before_scaler.pkl', 'rb'))
-y_scaler = pickle.load(open('/home/cem/learning/models/push_effect_scaler.pkl', 'rb'))
+objs =   {'box': [2078, 2080], 'hcylinder': [263], 'sphere': [303, 301]}
+x_scaler = pickle.load(open('/Users/Cem/learning/models/push_before_scaler.pkl', 'rb'))
+y_scaler = pickle.load(open('/Users/Cem/learning/models/push_effect_scaler.pkl', 'rb'))
 for o, rid in objs.iteritems():
     for r in rid:
-        before_csv = '/media/cem/ROSDATA/ros_data/features/new6/652/push/%s/%d/0.csv' % (o, r)
-        after_csv = '/media/cem/ROSDATA/ros_data/features/new6/652/push/%s/%d/1.csv' % (o, r)
+        before_csv = '/Volumes/ROSDATA/ros_data/features/new4/640/push/%s/%d/0.csv' % (o, r)
+        after_csv = '/Volumes/ROSDATA/ros_data/features/new4/640/push/%s/%d/1.csv' % (o, r)
 
         before_features = np.genfromtxt(before_csv, delimiter=',')
         after_features = np.genfromtxt(after_csv, delimiter=',')
@@ -27,7 +27,7 @@ for o, rid in objs.iteritems():
         b = x_scaler.transform(before_features.reshape(1, -1)).flatten()[6:51]
         e = y_scaler.transform(effect_features.reshape(1, -1)).flatten()[0:3]
 
-        plt.plot(b, label='%s_%d' % (o, r))
+        plt.plot(e, label='%s_%d' % (o, r))
 
 
 plt.legend()
