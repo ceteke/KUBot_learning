@@ -5,10 +5,11 @@ from copy import deepcopy
 
 class DataHandler():
 
-    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/new4/'):
+    def __init__(self, data_path='/Volumes/ROSDATA/ros_data/features/new6/'):
         self.data_path = data_path
         self.csv_folders = os.listdir(self.data_path)
         self.actions = []
+        self.dropped = []
         # self.dv = DataSetVisualization()
 
     def reduce_features(self, features):
@@ -70,8 +71,9 @@ class DataHandler():
                         after_features = np.genfromtxt(after_csv, delimiter=',')
                         #after_features = self.reduce_features(after_features)
                         #print len(after_features)
-                        if np.array_equal(after_features, np.array([-1.0]*51)):
-                            effect_features = np.absolute(deepcopy(before_features))
+                        if np.array_equal(after_features, np.array([0.0]*51)):
+                            self.dropped.append('%s%s' % (od, id))
+                            effect_features = deepcopy(before_features)
                         else:
                             effect_features = np.absolute(np.subtract(after_features, before_features))
 

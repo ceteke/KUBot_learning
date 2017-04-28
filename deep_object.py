@@ -14,10 +14,12 @@ import matplotlib.pyplot as plt
 def get_nn():
     model = Sequential()
     model.add(Dense(128, input_dim=51, activation='relu'))
+    model.add(Dense(256, activation='relu'))
     model.add(Dense(128, activation='relu'))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(3, activation='tanh'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(3, activation='relu'))
     model.compile(loss='mean_absolute_error', optimizer='adagrad')
 
     return model
