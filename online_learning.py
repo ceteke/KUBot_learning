@@ -12,7 +12,7 @@ class OnlineLearning():
 
     def train(self):
         for a in self.dh.actions:
-            a.split_train_test(0.01)
+            a.split_train_test(0.1)
             a.scale_dataset()
             print a.name, len(a.X_train), len(a.X_test)
             #bar = pyprind.ProgBar(len(a.X_train), track_time=False, title='Training %s...' % (a.name))
@@ -24,8 +24,8 @@ class OnlineLearning():
                 e_min_distance = a.effect_som.get_min_distance(y)
                 if e_min_distance == -1 or e_min_distance >= 0.08:
                     a.effect_som.add_neuron(y)
-
-                a.effect_som.update(y)
+                else:
+                    a.effect_som.update(y)
                 #bar.update()
 
             pp = pprint.PrettyPrinter(indent=2)

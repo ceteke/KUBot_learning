@@ -23,7 +23,7 @@ class Action():
         self.objects = []
         self.samples = []
 
-        self.effect_som = SOM(3, 0.2, 0.02, T1=100, T2=100)
+        self.effect_som = SOM(3, 0.01, 0.05, T1=100, T2=100)
 
         self.nn = Sequential()
         self.nn.add(Dense(128, input_dim=51, activation='relu'))
@@ -55,7 +55,6 @@ class Action():
         self.X_test = []
         self.y_test = []
 
-        random.seed(128)
         random.shuffle(self.samples)
         how_many = int(round(test_size*len(self.samples)))
         self.test_samples = self.samples[:how_many]

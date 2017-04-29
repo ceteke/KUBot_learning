@@ -1,20 +1,20 @@
 from models import SOM
 from data_handler import DataHandler
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import numpy as np
 from sklearn.cluster import KMeans
 import pprint
 import pickle
 
-pp = pprint.PrettyPrinter(indent=2)
-effect_som = SOM(3, 0.1, 0.03, T1=100, T2=100)
-aux_effect_cluster = KMeans(n_clusters=10)
+pp = pprint.PrettyPrinter(indent=1)
+effect_som = SOM(3, 0.01, 0.05, T1=100, T2=100)
+#effect_aux = KMeans(n_clusters=10)
 dh = DataHandler()
 dh.collect_data()
 
 for a in dh.actions:
-    y_scaler = pickle.load(open('/Users/Cem/learning/models/push_effect_scaler.pkl', 'rb'))
-    a.split_train_test(0.2)
+    y_scaler = MinMaxScaler()
+    a.split_train_test(0.1)
     y_train = y_scaler.fit_transform(a.y_train)
 
     for y in y_train:
@@ -22,16 +22,20 @@ for a in dh.actions:
         effect_min_distance = effect_som.get_min_distance(y)
         if effect_min_distance > 0.08 or effect_min_distance == -1:
             effect_som.add_neuron(y)
+        else:
+            effect_som.update(y)
 
-        effect_som.update(y)
-
+    #effect_aux.fit(effect_som.weights)
     clusters = {}
     for s in a.test_samples:
         obj_name = s.obj.name
-        obj_pos = s.obj.pose
+        obj_pos = str(s.obj.pose)
+        obj_id = s.obj.id
         y = s.y
+        if obj_id in dh.dropped:
+            obj_pos += '*'
         y_s = y_scaler.transform(y.reshape(1, -1)).flatten()[0:3]
-        cid = effect_som.winner(y_s)
+        cid = effect_som.winner(y_s.reshape(1,-1))
 
         if cid in clusters:
             objs = clusters[cid]
