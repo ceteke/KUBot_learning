@@ -1,20 +1,11 @@
-from sklearn.linear_model import LinearRegression
-import numpy as np
-from sklearn.mixture import GaussianMixture
-from sklearn.cluster import KMeans
 import pickle
 from my_object import MyObject
 import random
 from sample import Sample
-from sklearn.preprocessing import minmax_scale
-from sklearn.cluster import MiniBatchKMeans
-from models import OnlineRegression, SOM
+from models import SOM
 from keras.models import Sequential
-from keras.layers import Dense, Activation, MaxPooling2D, Conv2D, Dropout, Flatten
-from keras.losses import mean_absolute_error
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from keras.constraints import maxnorm
-from keras.layers.recurrent import LSTM
+from keras.layers import Dense
+from sklearn.preprocessing import MinMaxScaler
 
 class Action():
 
@@ -37,6 +28,12 @@ class Action():
 
         self.y_train_p = []
         self.y_test_p = []
+
+    def save_models(self):
+        self.nn.save('/Volumes/ROSDATA/models/nn.h5')
+        pickle.dump(self.effect_som, open('/Volumes/ROSDATA/models/som.pkl', 'wb'))
+        pickle.dump(self.object_scaler, open('/Volumes/ROSDATA/models/object_scaler.pkl', 'wb'))
+        pickle.dump(self.effect_scaler, open('/Volumes/ROSDATA/models/effect_scaler.pkl', 'wb'))
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)

@@ -12,10 +12,10 @@ class OnlineLearning():
 
     def train(self):
         for a in self.dh.actions:
-            a.split_train_test(0.1)
+            a.split_train_test(0.01)
             a.scale_dataset()
             print a.name, len(a.X_train), len(a.X_test)
-            #bar = pyprind.ProgBar(len(a.X_train), track_time=False, title='Training %s...' % (a.name))
+            bar = pyprind.ProgBar(len(a.X_train), track_time=False, title='Training %s...' % (a.name))
             for i in range(len(a.X_train)):
                 x = a.X_train[i]
                 y = a.y_train_p[i]
@@ -26,7 +26,7 @@ class OnlineLearning():
                     a.effect_som.add_neuron(y)
                 else:
                     a.effect_som.update(y)
-                #bar.update()
+                bar.update()
 
             pp = pprint.PrettyPrinter(indent=2)
             clusters = {}
@@ -66,6 +66,8 @@ class OnlineLearning():
             pp.pprint(clusters)
 
             print "#neurons:", len(a.effect_som.weights)
+
+            a.save_models()
 
 
 
