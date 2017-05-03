@@ -3,7 +3,7 @@ from my_object import MyObject
 import random
 from sample import Sample
 from models import SOM
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense
 from sklearn.preprocessing import MinMaxScaler
 
@@ -34,6 +34,12 @@ class Action():
         pickle.dump(self.effect_som, open('/Volumes/ROSDATA/models/som.pkl', 'wb'))
         pickle.dump(self.object_scaler, open('/Volumes/ROSDATA/models/object_scaler.pkl', 'wb'))
         pickle.dump(self.effect_scaler, open('/Volumes/ROSDATA/models/effect_scaler.pkl', 'wb'))
+
+    def load_models(self):
+        self.nn = load_model('/Volumes/ROSDATA/models/push_nn_0.h5')
+        self.effect_som = pickle.load(open('/Volumes/ROSDATA/models/push_effect_som_0.pkl', 'rb'))
+        self.object_scaler = pickle.load(open('/Volumes/ROSDATA/models/object_scaler.pkl', 'rb'))
+        self.effect_scaler = pickle.load(open('/Volumes/ROSDATA/models/effect_scaler.pkl', 'rb'))
 
     def add_data(self, obj_name, obj_pose, X, y):
         obj_id = '%s%d' % (obj_name, obj_pose)
