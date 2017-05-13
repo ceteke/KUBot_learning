@@ -1,7 +1,7 @@
 from data_handler import DataHandler
 import pickle
 from keras.models import Sequential
-from keras.layers import Dense, Activation, MaxPooling2D, Conv2D, Dropout, Flatten
+from keras.layers import Dense, Activation, MaxPooling2D, Conv2D, Dropout, Flatten, TimeDistributed
 from keras.losses import mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from keras.constraints import maxnorm
@@ -13,14 +13,10 @@ import matplotlib.pyplot as plt
 
 def get_nn():
     model = Sequential()
-    model.add(Dense(128, input_dim=51, activation='relu'))
-    model.add(Dense(256, activation='relu'))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(16, activation='relu'))
+    model.add(TimeDistributed(Dense(128, input_shape=(51,), activation='relu')))
+    model.add(LSTM(128))
     model.add(Dense(3, activation='relu'))
-    model.compile(loss='mean_absolute_error', optimizer='adagrad')
+    model.compile(loss='binary_crossentropy', optimizer='adam')
 
     return model
 
@@ -53,6 +49,7 @@ for a in dh.actions:
     for i in range(len(X_train)):
         x = X_train[i]
         y = y_train_p[i]
+        print x.reshape(1,-1).shape
         nn.fit(x.reshape(1, -1), y.reshape(1, -1), verbose=2, batch_size=1, epochs=10)
         #nn.update(x, y)
 

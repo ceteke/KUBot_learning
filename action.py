@@ -16,12 +16,12 @@ class Action():
 
         self.effect_som = SOM(3, 0.01, 0.05, T1=100, T2=100)
 
-        self.nn = Sequential()
-        self.nn.add(Dense(128, input_dim=51, activation='relu'))
-        self.nn.add(Dense(128, activation='relu'))
-        self.nn.add(Dense(64, activation='relu'))
-        self.nn.add(Dense(3, activation='relu'))
-        self.nn.compile(loss='mean_absolute_error', optimizer='adagrad')
+        # self.nn = Sequential()
+        # self.nn.add(Dense(128, input_dim=51, activation='relu'))
+        # self.nn.add(Dense(128, activation='relu'))
+        # self.nn.add(Dense(64, activation='relu'))
+        # self.nn.add(Dense(3, activation='relu'))
+        # self.nn.compile(loss='mean_absolute_error', optimizer='adagrad')
 
         self.object_scaler = MinMaxScaler()
         self.effect_scaler = MinMaxScaler()
